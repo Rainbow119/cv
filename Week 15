@@ -1,0 +1,106 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// TreeNode class definition
+class TreeNode {
+public:
+    int data;
+    TreeNode* left;
+    TreeNode* right;
+
+    // Constructor
+    TreeNode(int value)
+        : data(value), left(nullptr), right(nullptr)
+    {
+    }
+};
+
+// Function to check if the given sequence represents pre-order traversal of a binary search tree
+bool isPreorderSequence(TreeNode* root, const vector<int>& sequence)
+{
+    // Base case: an empty sequence
+    if (sequence.empty())
+        return true;
+
+    // The first element of the sequence is the root's value
+    int rootValue = sequence[0];
+
+    // Split the sequence into left and right subtrees
+    vector<int> leftSequence, rightSequence;
+    for (int i = 1; i < sequence.size(); i++) {
+        if (sequence[i] < rootValue)
+            leftSequence.push_back(sequence[i]);
+        else
+            rightSequence.push_back(sequence[i]);
+    }
+
+    // Check if all elements in the right subtree are greater than the root value
+    for (int i = 0; i < rightSequence.size(); i++) {
+        if (rightSequence[i] < rootValue)
+            return false;
+    }
+
+    // Check if all elements in the left subtree are less than the root value
+    for (int i = 0; i < leftSequence.size(); i++) {
+        if (leftSequence[i] > rootValue)
+            return false;
+    } 
+
+    // Recursively check if the left and right subtrees satisfy the property
+    return isPreorderSequence(root->left, leftSequence) && isPreorderSequence(root->right, rightSequence);
+}
+
+// Function to create a binary search tree from an array
+TreeNode* createBST(const vector<int>& items)
+{
+    if (items.empty())
+        return nullptr;
+
+    TreeNode* root = new TreeNode(items[0]);
+
+    for (int i = 1; i < items.size(); i++) {
+        TreeNode* newNode = new TreeNode(items[i]);
+        TreeNode* current = root;
+
+        while (true) {
+            if (items[i] < current->data) {
+                if (current->left == nullptr) {
+                    current->left = newNode;
+                    break;
+                }
+                current = current->left;
+            } else {
+                if (current->right == nullptr) {
+                    current->right = newNode;
+                    break;
+                }
+                current = current->right;
+            }
+        }
+    }
+
+    return root;
+}
+
+int main()
+{
+    // Sample usage
+    vector<int> sequence;
+    sequence.push_back(8);
+    sequence.push_back(5);
+    sequence.push_back(3);
+    sequence.push_back(6);
+    sequence.push_back(10);
+    sequence.push_back(9);
+    sequence.push_back(12);
+
+    TreeNode* root = createBST(sequence);
+
+    bool isPreorder = isPreorderSequence(root, sequence);
+    cout << "Is the sequence a pre-order traversal of the tree? " << (isPreorder ? "Yes" : "No") << endl;
+
+    // Cleanup memory (not shown in the example)
+
+    return 0;
+}
