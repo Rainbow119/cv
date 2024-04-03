@@ -1,0 +1,385 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <string>
+
+using namespace std;
+
+const int NUM_OF_COLUMNS = 20;
+const int NUM_OF_ROWS = 20;
+const int TOTAL_NUM_SPACE = 400;
+const int AGE_ANTS_BREED = 3;
+const int AGE_DOODLE_BREED = 8;
+const int AGE_DOODLE_STARVE = 3;
+
+class Organism
+{
+public:
+    Organism(int index_x, int index_y, int myAge);
+    Organism();
+    int get_x() const {return initial_x;};
+    int get_y() const {return initial_y;};
+    int get_age() const {return age;};
+    bool is_Alive() const {return isAlive;};  
+    virtual char get_symbol(){return symbol;}
+    void set_x(int update_x){initial_x = update_x;};
+    void set_y(int update_y){initial_y = update_y;};
+    void set_age(int updateAge) {age = updateAge;};
+    void set_symbol(char updateSymbol);
+    void set_isAlive(bool update_alive) {isAlive = update_alive;};
+    virtual void display_symbol(){cout<<symbol;}
+  
+protected:
+    char symbol;                
+    int initial_x;
+    int initial_y;
+    int age;
+    bool isAlive;
+};
+
+class Grid: public Organism
+{
+public:
+    Grid();
+    virtual void display_symbol(){cout<<symbol;}
+    virtual char get_symbol(){return symbol;}
+
+private:
+    char symbol;
+};
+
+class Ant: public Organism{
+public:
+    Ant();
+    virtual void display_symbol(){cout<<symbol;}
+    virtual char get_symbol(){return symbol;}
+    virtual void move(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Grid arr_empty_space[]);   
+    virtual void breed(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Ant arr_ants[], int &count_ants);
+
+private:
+    char symbol;
+};
+
+class Doodlebug: public Organism{
+public:
+    Doodlebug();
+    void set_mealTime(int update_mealTime) {meal_time = update_mealTime;};
+    int get_mealTime() const {return meal_time;};
+    virtual void display_symbol(){cout<<symbol;};
+    virtual char get_symbol(){return symbol;};
+    virtual void move(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Doodlebug arr_doodlebugs[], Grid arr_empty_space[]);
+    virtual void breed(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Doodlebug arr_doodlebugs[], int &count_doodlebugs);
+    void starve(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Grid arr_empty_space[]);
+    
+private:
+    char symbol;
+    int meal_time;
+};
+
+// functions:
+void move_one_step(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Ant arr_ants[], Grid arr_empty_space[], Doodlebug arr_doodlebugs[], int &count_ants, int &count_doodlebugs);
+int find_next_space(Doodlebug arr[]);
+int find_next_space(Ant arr[]);
+void initialize_garden(Organism* garden[NUM_OF_ROWS][NUM_OF_COLUMNS]);
+void spawnOrganisms(int num_doodlebugs, int num_ants, Organism* arr_doodlebugs, Organism* arr_ants, Organism* garden[20][20]);
+void displayGarden(Organism* garden[NUM_OF_ROWS][NUM_OF_COLUMNS], Organism* arr_empty_space);
+
+
+int main(){
+    int num_of_doodlebugs = 0, num_of_ants = 0, temp_x, temp_y;
+    Doodlebug arr_doodlebugs[TOTAL_NUM_SPACE];  
+    Ant arr_ants[TOTAL_NUM_SPACE];   
+    Grid arr_empty_space[1];   
+    Organism* garden[NUM_OF_ROWS][NUM_OF_COLUMNS];            
+    srand(time(0) % 100);        
+           
+    cout << "\n This is a two-dimensional predator-prey simulation. \n" << endl;
+    initialize_garden (garden);
+    spawnOrganisms(5, 100, arr_doodlebugs, arr_ants, garden);
+    displayGarden(garden, arr_empty_space);
+
+    string move_next;
+    bool isEliminated = false;
+    while(isEliminated == false){    
+        cout << "\n Press enter to move one step: \n";
+        getline(cin,move_next);
+        if(move_next == ""){  
+            move_one_step(garden, arr_ants, arr_empty_space, arr_doodlebugs, num_of_ants, num_of_doodlebugs); 
+            isEliminated = false;  
+        }
+        else
+            isEliminated = true; 
+    }
+    return 0;
+}
+
+
+Organism::Organism(){initial_x = -1,initial_y = -1,age = 0,isAlive = false;}
+
+Organism::Organism(int fIndex, int sIndex, int myAge){initial_x = fIndex,initial_y = sIndex,age = myAge;}
+
+Grid::Grid():Organism(), symbol('-'){};                   
+
+Ant::Ant():Organism(), symbol('o'){};    
+
+Doodlebug::Doodlebug(): Organism(), symbol('X'), meal_time(0){};
+
+void Ant::move(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Grid arr_empty_space[]) {
+    int direction = rand() % 4;
+    set_age(get_age() + 1);
+    int new_x = get_x();
+    int new_y = get_y();
+    
+    switch (direction) {
+        case 0:
+            new_x--;
+            break;
+        case 1:
+            new_y++;
+            break;
+        case 2:
+            new_x++;
+            break;
+        case 3:
+            new_y--;
+            break;
+        default:
+            return; 
+    }
+    
+    if (new_x >= 0 && new_x < NUM_OF_ROWS && new_y >= 0 && new_y < NUM_OF_COLUMNS) {
+        Organism* destination = arr_grid[new_x][new_y];
+        if (destination->get_symbol() == '-') {
+            arr_grid[new_x][new_y] = this;
+            arr_grid[get_x()][get_y()] = destination;
+            set_x(new_x);
+            set_y(new_y);
+        }
+    }
+}
+
+void Ant::breed(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Ant arr_ants[], int &count_ants) {
+    if (get_age() % AGE_ANTS_BREED != 0) {
+        return;
+    }
+
+    int next_avail_space = find_next_space(arr_ants);
+    int directions[] = {-1, 0, 1, 0, -1};
+    int randIndex = rand() % 4;
+    for (int i = randIndex; i < randIndex + 4; i++) {
+        int x = get_x() + directions[i % 4];
+        int y = get_y() + directions[(i + 1) % 4];
+        if (x < 0 || x >= NUM_OF_ROWS || y < 0 || y >= NUM_OF_COLUMNS) {
+            continue;
+        }
+        if (arr_grid[x][y]->get_symbol() != '-') {
+            continue;
+        }
+        arr_ants[next_avail_space].set_x(x);
+        arr_ants[next_avail_space].set_y(y);
+        arr_ants[next_avail_space].set_isAlive(true);
+        arr_grid[x][y] = &arr_ants[next_avail_space];
+        break;
+    }
+}
+
+void Doodlebug::move(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Doodlebug arr_doodlebugs[], Grid arr_empty_space[]) {
+    set_age(get_age() + 1);
+    
+    bool found_prey = false;
+    int num_tries = 0;
+    int direction_x[] = {0, 0, 1, -1};
+    int direction_y[] = {1, -1, 0, 0};
+    
+    while (!found_prey && num_tries < 4) {
+        int direction = rand() % 4;
+        int new_x = get_x() + direction_x[direction];
+        int new_y = get_y() + direction_y[direction];
+        
+        if (new_x >= 0 && new_x < NUM_OF_ROWS && new_y >= 0 && new_y < NUM_OF_COLUMNS) {
+            Organism* prey = arr_grid[new_x][new_y];
+            if (prey->get_symbol() == 'o') {
+                prey->set_isAlive(false);
+                prey->set_age(0);
+                arr_grid[new_x][new_y] = this;
+                arr_grid[get_x()][get_y()] = &arr_empty_space[0];
+                set_x(new_x);
+                set_y(new_y);
+                set_mealTime(0);
+                found_prey = true;
+            }
+        }
+        num_tries++;
+    }
+    
+    if (!found_prey) {
+        int num_tries = 0;
+        while (num_tries < 4) {
+            int direction = rand() % 4;
+            int new_x = get_x() + direction_x[direction];
+            int new_y = get_y() + direction_y[direction];
+            
+            if (new_x >= 0 && new_x < NUM_OF_ROWS && new_y >= 0 && new_y < NUM_OF_COLUMNS) {
+                Organism* empty_space = arr_grid[new_x][new_y];
+                if (empty_space->get_symbol() == '-') {
+                    // move to the empty cell
+                    arr_grid[new_x][new_y] = this;
+                    arr_grid[get_x()][get_y()] = &arr_empty_space[0];
+                    set_x(new_x);
+                    set_y(new_y);
+                    found_prey = true;
+                    break;
+                }
+            }
+            num_tries++;
+        }
+    }
+    
+    if (!found_prey) {
+        set_mealTime(get_mealTime() + 1);
+    }
+}
+
+
+void Doodlebug::breed(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Doodlebug arr_doodlebugs[], int &count_doodlebugs) {
+    const int next_avail_space = find_next_space(arr_doodlebugs);
+    const int x = get_x();
+    const int y = get_y();
+    
+    if (get_age() > 0 && get_age() % AGE_DOODLE_BREED == 0) {
+        int direction_x[] = {-1, 0, 1, 0};
+        int direction_y[] = {0, 1, 0, -1};
+        
+        for (int i = 0; i < 4; i++) {
+            int new_x = x + direction_x[i];
+            int new_y = y + direction_y[i];
+            
+            if (new_x >= 0 && new_x < NUM_OF_ROWS && new_y >= 0 && new_y < NUM_OF_COLUMNS && arr_grid[new_x][new_y]->get_symbol() == '-') {
+                arr_grid[new_x][new_y] = &arr_doodlebugs[next_avail_space];
+                arr_doodlebugs[next_avail_space].set_x(new_x);
+                arr_doodlebugs[next_avail_space].set_y(new_y);
+                arr_doodlebugs[next_avail_space].set_isAlive(true);
+                break;
+            }
+        }
+    }
+}
+
+void Doodlebug::starve(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Grid arr_empty_space[]){
+    if (get_mealTime() == AGE_DOODLE_STARVE){
+        set_isAlive(false);
+        set_age(0);
+        arr_grid[get_x()][get_y()] = &arr_empty_space[0];
+    }
+}
+void move_one_step(Organism* arr_grid[NUM_OF_ROWS][NUM_OF_COLUMNS], Ant arr_ants[], Grid arr_empty_space[], Doodlebug arr_doodlebugs[], int& count_ants, int& doodlebugCounter) {
+    for (int i = 0; i < TOTAL_NUM_SPACE; i++) {
+        Doodlebug& doodlebug = arr_doodlebugs[i];
+        if (doodlebug.is_Alive()) {
+            doodlebug.move(arr_grid, arr_doodlebugs, arr_empty_space);
+            doodlebug.breed(arr_grid, arr_doodlebugs, doodlebugCounter);
+            doodlebug.starve(arr_grid, arr_empty_space);
+        }
+    }
+    for (int i = 0; i < TOTAL_NUM_SPACE; i++) {
+        Ant& ant = arr_ants[i];
+        if (ant.is_Alive()) {
+            ant.move(arr_grid, arr_empty_space);
+            ant.breed(arr_grid, arr_ants, count_ants);
+        }
+    }
+
+    for (int row = 0; row < NUM_OF_ROWS; row++) {
+        for (int col = 0; col < NUM_OF_COLUMNS; col++) {
+            arr_grid[row][col]->display_symbol();
+            cout << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+int find_next_space(Doodlebug arr[]){
+    int adj_space = 0;
+    for(int i = 0; i < TOTAL_NUM_SPACE; i++){
+        if (arr[i].is_Alive() == 0){
+            adj_space = i;
+            i = TOTAL_NUM_SPACE;
+        }
+    }
+    return adj_space;
+}
+
+int find_next_space(Ant arr[]){
+    int adj_space = 0;
+    for(int i = 0; i < TOTAL_NUM_SPACE; i++){
+        if (arr[i].is_Alive() == 0){
+            adj_space = i;
+            i = TOTAL_NUM_SPACE;
+        }
+    }
+    return adj_space;
+}
+
+void initialize_garden(Organism* garden[NUM_OF_ROWS][NUM_OF_COLUMNS]) {
+    for (int r = 0; r < NUM_OF_ROWS; r++) {
+        for (int c = 0; c < NUM_OF_COLUMNS; c++) {
+            garden[r][c] = nullptr;
+        }
+    }
+}
+
+void spawnOrganisms(int num_doodlebugs, int num_ants, Organism* arr_doodlebugs, Organism* arr_ants, Organism* garden[20][20]) {
+    int num_of_doodlebugs = 0, num_of_ants = 0, temp_x, temp_y;
+
+    while (num_of_doodlebugs < num_doodlebugs) {
+        bool spawned = false;
+        while (!spawned) {
+            temp_x = rand() % 20;
+            temp_y = rand() % 20;
+            if (garden[temp_x][temp_y] == nullptr) {
+                garden[temp_x][temp_y] = &arr_doodlebugs[num_of_doodlebugs];
+                garden[temp_x][temp_y]->set_x(temp_x);
+                garden[temp_x][temp_y]->set_y(temp_y);
+                garden[temp_x][temp_y]->set_isAlive(true);
+                num_of_doodlebugs++;
+                spawned = true;
+            }
+        }
+    }
+
+    while (num_of_ants < num_ants) {
+        bool spawned = false;
+        while (!spawned) {
+            temp_x = rand() % 20;
+            temp_y = rand() % 20;
+            if (garden[temp_x][temp_y] == nullptr) {
+                garden[temp_x][temp_y] = &arr_ants[num_of_ants];
+                garden[temp_x][temp_y]->set_x(temp_x);
+                garden[temp_x][temp_y]->set_y(temp_y);
+                garden[temp_x][temp_y]->set_isAlive(true);
+                num_of_ants++;
+                spawned = true;
+            }
+        }
+    }
+}
+
+void displayGarden(Organism* garden[NUM_OF_ROWS][NUM_OF_COLUMNS], Organism* arr_empty_space){
+    for (int r = 0; r < NUM_OF_COLUMNS; r++) {
+        for (int i = 0; i < NUM_OF_ROWS; i++) {
+            if (garden[r][i] == nullptr) {
+                garden[r][i] = arr_empty_space;
+            }
+        }
+    }
+    for (int r = 0; r < NUM_OF_COLUMNS; r++) {
+        for (int i = 0; i < NUM_OF_ROWS; i++) {
+            garden[r][i]->display_symbol();
+            cout << " ";
+        }
+        cout << endl;
+    }
+}
+
+
