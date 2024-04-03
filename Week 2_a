@@ -1,0 +1,44 @@
+#include <iostream>
+using namespace std;
+
+int main () {
+
+    double priceItem1, priceItem2;
+    double priceBase, priceAfterDisc, priceAfterMem, priceAfterTax, tax;
+    char card;
+
+    cout<<"Enter price of first item: ";
+    cin>>priceItem1;
+    cout<<"Enter price of second item: ";
+    cin>>priceItem2;
+
+    priceBase = priceItem1 + priceItem2;
+
+    if (priceItem1 > priceItem2 || priceItem1 == priceItem2)
+        priceAfterDisc = priceItem1 + (priceItem2 * 0.5);
+    else 
+        priceAfterDisc = (priceItem1 * 0.5) + priceItem2;
+
+    cout<<"Does customer have a club card? (Y/N) ";
+    cin>>card;
+    if (card == 'Y' || card == 'y')
+        priceAfterMem = priceAfterDisc * 0.9;
+    else    
+        priceAfterMem = priceAfterDisc;
+    
+    cout<<"Enter tax rate, e.g. 5.5 for 5.5% tax: ";
+    cin>>tax;
+    
+    priceAfterTax = priceAfterMem + (priceAfterMem * (tax / 100));
+
+    cout.setf(ios::fixed);
+    cout.setf(ios::showpoint);
+    cout.precision(1);
+    cout<<"Base price: "<<priceBase<<endl;
+    cout<<"Price after discounts: "<<priceAfterMem<<endl;
+    cout.precision(5);
+    cout<<"Total price: "<<priceAfterTax<<endl;
+
+    return 0;
+
+}
