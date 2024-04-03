@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> find_min_max(vector<int>& nums, int left, int right);
+
+int main() {
+
+    vector<int> arr; 
+    arr.push_back(6);
+    arr.push_back(2);
+    arr.push_back(8);
+    arr.push_back(5);
+    arr.push_back(3);
+    arr.push_back(9);
+    arr.push_back(4);
+    arr.push_back(10);
+
+    vector<int> result;
+    result = find_min_max (arr, 0, arr.size() - 1);
+
+    cout << "Mininum is " << result[0] << " and Maximum is " << result[1] << endl;
+    return 0;
+}
+
+vector<int> find_min_max(vector<int>& nums, int left, int right) {
+    
+    vector<int> result (2);
+    
+    if (left == right) {  
+        result[0] = nums[left];
+        result[1] = nums[right];
+        return result;
+    }
+    if (left + 1 == right) {  
+        result[0] = min(nums[left], nums[right]);
+        result[1] = max(nums[left], nums[right]);
+        return result;
+    }
+
+    int mid = left + (right - left) / 2;  
+    vector<int> left_half = find_min_max(nums, left, mid);
+    vector<int> right_half = find_min_max(nums, mid + 1, right);
+   
+    result[0] = min(left_half[0], right_half[0]);  
+    result[1] = max(left_half[1], right_half[1]);
+    
+    return result;
+}
+
+vector<int> find_min_max(vector<int>& nums) {
+    return find_min_max(nums, 0, nums.size()-1);
+}
