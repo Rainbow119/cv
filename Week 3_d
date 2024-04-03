@@ -1,0 +1,46 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main () {
+
+    cout.setf(ios::fixed);
+    cout.setf(ios::showpoint);
+    cout.precision (4);
+
+    int length, product1;
+
+    cout<<"Section a: \n";
+    cout<<"Please enter the length of the sequence: ";
+    cin>>length;
+    cout<<"Please enter your sequence: \n";
+    
+    for (int counterA = 1; counterA <= length; counterA++){
+        int userInputA;
+        cin>>userInputA;
+        product1 *= userInputA;
+    }
+
+    double mean1 = pow((double)product1, 1/(double)length);
+
+    cout<<"The geometric mean is "<<mean1<<endl;
+    
+    cout<<"Section b: \n";
+    cout<<"Please enter non-empty sequence of positive integers, each one in a separate line. End your sequence by typing -1: \n";
+    
+    int userInputB, counterB = 0, product2 = 1;
+
+    cin>>userInputB;
+
+    while (userInputB >= 0) {
+        product2 *= userInputB;
+        counterB++;
+        cin>>userInputB;
+    }
+
+    double mean2 = pow((double) product2, 1/(double) counterB);
+
+    cout<<"The geometric mean is: "<<mean2<<endl;
+
+    return 0;
+}
