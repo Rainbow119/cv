@@ -1,0 +1,42 @@
+#include <iostream>
+using namespace std;
+
+const int HOURS_PER_DAY = 24;
+const int MINUTES_PER_HOUR = 60;
+
+int main()  {
+
+    int daysJohnWorked, hoursJohnWorked, minutesJohnWorked;
+    int daysBillWorked, hoursBillWorked, minutesBillWorked;
+    int carriedOverMinutes, carriedOverHours, totalHours, totalMinutes;
+    int totalDays, remainHours, remainMinutes;
+
+    cout<<"Please enter the number of days John has worked: ";
+    cin>>daysJohnWorked;
+    cout<<"Please enter the number of hours John has worked: ";
+    cin>>hoursJohnWorked;
+    cout<<"Please enter the number of minutes John has worked: ";
+    cin>>minutesJohnWorked;
+    cout<<endl;
+    cout<<"Please enter the number of days Bill has worked: "; 
+    cin>>daysBillWorked;
+    cout<<"Please enter the number of hours Bill has worked: ";
+    cin>>hoursBillWorked;
+    cout<<"Please enter the number of minutes Bill has worked: ";
+    cin>>minutesBillWorked;
+    cout<<endl;
+
+    totalMinutes = minutesJohnWorked + minutesBillWorked;
+    carriedOverMinutes = totalMinutes / MINUTES_PER_HOUR; 
+    remainMinutes = totalMinutes % MINUTES_PER_HOUR;
+
+    totalHours = hoursJohnWorked + hoursBillWorked + carriedOverMinutes;
+    carriedOverHours = totalHours / HOURS_PER_DAY;
+    remainHours = totalHours % HOURS_PER_DAY;
+
+    totalDays = daysJohnWorked + daysBillWorked + carriedOverHours;
+
+    cout<<"The total time both of them worked together is: "<<totalDays<<" days, "<<remainHours<<" hours and "<<remainMinutes<<" minutes."<<endl;
+    
+    return 0;
+}
