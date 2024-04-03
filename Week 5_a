@@ -1,0 +1,25 @@
+#include <iostream>
+using namespace std;
+
+int fib (int n);
+int number;
+
+int main () {
+    cout<<"Please enter a positive integer: ";
+    cin>>number;
+    cout<<fib(number)<<endl;
+
+    return 0;
+}
+
+int fib (int n) {
+    int firstNum = 0, secondNum = 1, nextNum;
+    for (int i = 1; i < number; i++) {
+        nextNum = firstNum + secondNum;
+        firstNum = secondNum;
+        secondNum = nextNum;
+    }
+    return secondNum;
+}
+ 
+
