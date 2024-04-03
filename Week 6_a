@@ -1,0 +1,131 @@
+#include <iostream>
+using namespace std;
+
+int printMonthCalender (int numOfDays, int startingDay);
+bool isLeapYear (int year);
+void printYearCalender (int year, int startingDay);
+
+int main () {
+
+    int year, startingDay;
+    cout<<"Please enter a year: \n";
+    cin>>year;
+    cout<<"Please enter the starting day of the year: \n";
+    cin>>startingDay;
+    printYearCalender (year, startingDay);
+    return 0;
+}
+
+int printMonthCalender (int numOfDays, int startingDay) {
+    cout<<"Mon\tTue\tWed\tThr\tFri\tSat\tSun"<<endl;
+
+    for (int i = 1; i < startingDay; i++) {
+        cout<<'\t';
+    }
+
+    for (int i = 1; i <= numOfDays; i++) {
+        if (((startingDay + i - 1) % 7 == 0) || i == numOfDays) {
+            cout<<i<< endl;
+        } 
+        else {
+            cout<<i<< '\t';
+        }
+    }
+    return (numOfDays + startingDay -1) % 7;
+}
+
+bool isLeapYear (int year){
+    return (year%4 == 0) && (year%100 != 0) || (year%400 == 0);  
+}
+
+void printYearCalender (int year, int startingDay){
+    int lastDay;
+    for (int m=1; m<=12; m++) {
+        if (m == 1){
+            cout<<"January "<<year<<endl;
+            lastDay = printMonthCalender (31, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }
+        else if (m == 2){
+            if (isLeapYear(year)){
+                cout<<"February "<<year<<endl;
+                lastDay = printMonthCalender (29, startingDay); 
+                startingDay = lastDay+1;
+                cout<<endl;
+            }
+            else {
+                cout<<"February "<<year<<endl;
+                lastDay = printMonthCalender (28, startingDay); 
+                startingDay = lastDay+1;
+                cout<<endl;
+            }             
+        }
+        else if (m==3){
+            cout<<"March "<<year<<endl;
+            lastDay = printMonthCalender (31, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }
+        else if (m==4){
+            cout<<"April "<<year<<endl;
+            lastDay = printMonthCalender (30, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }
+        else if (m==5){
+            cout<<"May "<<year<<endl;
+            lastDay = printMonthCalender (31, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }else if (m==6){
+            cout<<"June "<<year<<endl;
+            lastDay = printMonthCalender (30, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }else if (m==7){
+            cout<<"July "<<year<<endl;
+            lastDay = printMonthCalender (31, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }else if (m==8){
+            cout<<"August "<<year<<endl;
+            lastDay = printMonthCalender (31, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }else if (m==9){
+            cout<<"September "<<year<<endl;
+            lastDay = printMonthCalender (30, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }else if (m==10){
+            cout<<"October "<<year<<endl;
+            lastDay = printMonthCalender (31, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }
+        else if (m==11){
+            cout<<"November "<<year<<endl;
+            lastDay = printMonthCalender (30, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }else if (m==12){
+            cout<<"December "<<year<<endl;
+            lastDay = printMonthCalender (31, startingDay);
+            startingDay = lastDay+1;
+            cout<<endl;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
