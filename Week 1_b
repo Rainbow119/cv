@@ -1,0 +1,25 @@
+#include <iostream>
+using namespace std;
+
+int main () {
+
+    int dollars, cents, dollarInCents, totalInCents;
+    int totalQuarters, totalDimes, totalNickels, totalPennies;
+    int remainAfterQuarter, remainAfterDime;
+
+    cout<<"Please enter your amount in the format of dollars and cents separated by space:"<<endl;
+    cin>>dollars>>cents;
+
+    dollarInCents = dollars * 100;
+    totalInCents = dollarInCents + cents;
+    totalQuarters = totalInCents / 25;
+    remainAfterQuarter = totalInCents % 25;
+    totalDimes = remainAfterQuarter / 10;
+    remainAfterDime = remainAfterQuarter % 10;
+    totalNickels =  remainAfterDime / 5;
+    totalPennies = remainAfterDime % 5;
+
+    cout<<dollars<<" dollars and "<<cents<<" cents are:"<<endl;
+    cout<<totalQuarters<<" quarters, "<<totalDimes<<" dimes, "<<totalNickels<<" nickels, and "<<totalPennies<<" pennies"<<endl;
+    return 0;
+}
