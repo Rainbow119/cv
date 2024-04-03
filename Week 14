@@ -1,0 +1,68 @@
+#include <iostream>
+#include <fstream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+bool symbolBalanceCheck(ifstream& file) {
+    stack<char> symbols;
+    string line;
+    bool insideString = false;
+
+    while (getline(file, line)) {
+        for (char c : line) {
+            if (c == '"') { //double quotes
+                insideString = !insideString;
+            }
+
+            if (!insideString) {
+                switch (c) {
+                    case '{':
+                    case '(':
+                    case '[':
+                        symbols.push(c);
+                        break;
+                    case '}':
+                        if (symbols.empty() || symbols.top() != '{') {
+                            return false;
+                        }
+                        symbols.pop();
+                        break;
+                    case ')':
+                        if (symbols.empty() || symbols.top() != '(') {
+                            return false;
+                        }
+                        symbols.pop();
+                        break;
+                    case ']':
+                        if (symbols.empty() || symbols.top() != '[') {
+                            return false;
+                        }
+                        symbols.pop();
+                        break;
+                }
+            }
+        }
+    }
+    return symbols.empty();
+}
+
+int main() {
+
+    ifstream file;
+    file.open("input.txt");
+    if (file.fail()){
+        cout << "Error opening file" << endl;
+    }
+
+    bool isBalanced = symbolBalanceCheck(file);
+
+    if (isBalanced) {
+        cout << "The symbols are balanced." << endl;
+    } else {
+        cout << "The symbols are not balanced." << endl;
+    }
+
+    return 0;
+}
