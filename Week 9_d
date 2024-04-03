@@ -1,0 +1,41 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int arr[100];
+    int num, i = 0;
+
+    cout << "Version 1 without vector:"<< endl;
+    cout << "Enter a sequence of positive integers ending with -1:\n";
+    while (true) {
+        cin >> arr[i];
+        if (arr[i] == -1) {
+            break;
+        }
+        i++;
+    }
+    int n = i;
+
+    cout << "Enter a number you want to search: ";
+    cin >> num;
+
+    bool found = false;
+    vector <int> indexArr;
+    for (i = 0; i < n; i++) {
+        if (arr[i] == num) {
+            indexArr.push_back(i+1);
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << num << " does not show in the sequence.\n";
+    }
+    else {
+        cout << num << " shows in lines " ;
+        for (auto index: indexArr){
+            cout << index << ", ";
+        }
+    }
+}
+
