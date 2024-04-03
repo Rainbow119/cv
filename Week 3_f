@@ -1,0 +1,32 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cout<<"Please enter a positive integer: ";
+    cin>>n;
+
+    for (int number = 1; number <= n; number++) {
+        int currentNum = number;
+        int numEven = 0, numOdd = 0;
+        
+        while (currentNum > 0) 
+        {
+            int digit = currentNum % 10; 
+            if (digit % 2 == 0) {
+                numEven = numEven + 1;
+            }
+            else {
+                numOdd = numOdd + 1;
+            }
+            currentNum = currentNum / 10;
+        }
+
+        if (numEven > numOdd) 
+        {
+            cout<<number<<endl;
+        }
+    }
+
+    return 0;
+}
