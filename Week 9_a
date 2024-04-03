@@ -1,0 +1,54 @@
+#include <iostream>
+#include <string> 
+
+using namespace std;
+
+string* createWordsArray (string sentence, int& outWordsArrSize);
+
+int main (){
+
+    string sentence = "You can do it";
+    int outWordsArrSize = 4;
+    string* words = createWordsArray (sentence, outWordsArrSize);
+    
+    //print out the arry of words and updated size.
+    for (int i=0; i < outWordsArrSize; i++){
+        cout << words[i] << " ";
+    }
+    cout << endl;
+    cout << "Updated array size: " << outWordsArrSize << endl;
+
+    return 0;
+}
+
+
+string* createWordsArray (string sentence, int& outWordsArrSize){
+    //count the number of words in the sentence.
+    int numSpaces = 0;
+    for (char c: sentence){
+        if (c == ' '){
+            numSpaces++;
+        }
+    }
+
+    //allocate memory for the array of words.
+    string* words = new string[numSpaces +1];
+    int index = 0; 
+    string word = "";
+    for (int i = 0; i < sentence.length(); i++){
+        if (sentence.at(i) != ' ') {
+            word = word + sentence.at(i);
+        }
+        else {
+            words[index] = word;
+            word = "";
+            index++;
+        }   
+    }
+    words[index] = word;
+    
+    // update the output parameter with the local size of array.
+    outWordsArrSize = numSpaces + 1;
+
+    return words;
+}
