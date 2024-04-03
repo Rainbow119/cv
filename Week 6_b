@@ -1,0 +1,62 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+void analyzeDivisors (int num, int& outCountDivs, int& outSumDivs);
+bool isPerfect (int num);
+
+int main () {
+    int num;
+    cout<<"Please enter a positive integer M (greater or equal to 2): \n";
+    cin>>num;
+
+    cout<<"All the perfect numbers between 2 and "<<num<<":"<<endl;
+
+    for (int i = 2; i<= num; i++){
+        if(isPerfect(i)){
+            cout<<i<<endl;
+        }
+    }
+    
+    cout<<"All pairs of amicable numbers that are between 2 and "<<num<<":"<<endl;
+    
+    for (int i = 2; i <= num; i++) {
+        int countDivs1 = 0, sumDivs1 = 0;
+        int m, countDivs2 = 0, sumDivs2 = 0;
+
+    analyzeDivisors(i, countDivs1, sumDivs1);
+    analyzeDivisors(sumDivs1, countDivs2, sumDivs2);
+
+    if ((i == sumDivs2) && (i < sumDivs1)) {
+            cout<<"("<<i<< ", " <<sumDivs1<< ")"<<endl;
+        }
+    }
+    return 0;
+}
+
+void analyzeDivisors (int num, int& outCountDivs, int& outSumDivs){
+    for (int i=1; i<sqrt(num); i++){
+        if (num % i == 0) {
+            outCountDivs++;
+            outSumDivs += i;
+        }
+    }
+    for (int i=sqrt(num); i>1; i--){
+        if (num % i == 0) {
+            if ((num/i) != num) {
+                outCountDivs++;
+                outSumDivs += num/i;
+            }
+        }
+    }
+}
+
+bool isPerfect (int num){
+    int countDivs = 0, sumDivs = 0;
+    analyzeDivisors (num, countDivs, sumDivs);
+    if (sumDivs == num) {
+        return true;
+    }
+    else
+        return false;
+}
