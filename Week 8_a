@@ -1,0 +1,65 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int findIndex (char ch);
+//find index number of string for each character.
+
+int main () {
+
+    string str;
+    int number_of_words = 0;
+    const int TOTAL_NUM_OF_CHAR = 26;
+    int letter_occurence [TOTAL_NUM_OF_CHAR];
+
+    cout << "Please enter a line of text." << endl;
+    getline(cin, str);
+    
+    //initializing array 
+    for (int i=0; i<TOTAL_NUM_OF_CHAR; i++) {
+        letter_occurence[i]=0;
+    }
+
+    bool isSpaceBeforeChar = true;
+    int length = str.length();
+    for (int i=0; i < length; i++) {
+        if (str[i] != ' '){ //if str[i] is a character,
+            if (isSpaceBeforeChar){//if there is a space before str[i], increase number_of_word.
+                number_of_words++;
+            }
+        }
+
+        int index = findIndex (str[i]); //find index for each str[i].
+        if (index != -1){ //if str[i] is an alphabet letter,
+            letter_occurence[index]++; //counts each letter.
+        }
+
+        isSpaceBeforeChar = (str[i] == ' '); //  if str[i] is not space-->false. if space-->true.
+    }
+    cout << number_of_words << "\t" << "words"<< endl; //print total number of words
+
+    for (int i=0; i<TOTAL_NUM_OF_CHAR; i++){
+        if (letter_occurence[i] != 0) { 
+            cout << letter_occurence[i] << "\t" << char(i+int('a')) << endl; //print existing letter and its occurence.
+        }
+    }
+
+    return 0;
+}
+
+int findIndex (char ch){
+    int index;
+    if (int(ch)>= 'a' && int(ch)<= 'z'){
+        index = int(ch) - int('a');
+
+    }
+    else if (int(ch)>= 'A' && int(ch)<= 'Z'){
+        index = int(ch) - int('A');
+    }
+    else {
+        index = -1;
+    }
+    return index;
+}
+
+
