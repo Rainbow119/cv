@@ -1,0 +1,47 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+const string SATURDAY = "Sa"; 
+const string SUNDAY = "Su";
+const int MINUTES_IN_HOUR = 60;
+const int EIGHT_AM = 480;
+const int SIX_PM = 1080;
+
+int main () {
+
+    string dayOfWeek;
+    int hour, minute, callLength, timeStarted;
+    double rate, totalCost;
+    char temp;
+
+    cout<<"Please enter the day of the week you called (i.e. Mo, Tu, We, Th, Fr, Sa, Su): ";
+    cin>>dayOfWeek;
+    cout<<"Please enter the time you started the call (type in 24-hour notation, i.e. if 1:30pm, type 13:30): "; 
+    cin>>hour>>temp>>minute;
+    cout<<"Please enter the length of the call in minutes: ";
+    cin>>callLength;
+    
+    timeStarted = (hour * MINUTES_IN_HOUR) + minute;
+
+    cout.setf(ios::fixed);
+    cout.setf(ios::showpoint);
+    cout.precision(2);
+
+    if (dayOfWeek == SATURDAY || dayOfWeek == SUNDAY) {
+        rate = 0.15;
+        }
+    else
+        if (timeStarted < EIGHT_AM || timeStarted > SIX_PM) {
+            rate = 0.25;
+            }
+        else {
+            rate = 0.40;
+            }
+    totalCost = rate * callLength;
+    
+    cout<<"The cost of the long distance call is $"<<totalCost<<endl;
+    
+    return 0;
+ }  
+   
