@@ -1,0 +1,152 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+class Person{
+private:
+    string name;
+    double paidAmount;
+    double owedAmount;
+    Person* nextPersonPtr;
+
+public:
+    Person(string in_name);
+    Person(string in_name, double in_paidAmount, Person* in_nextPersonPtr);
+
+    string GetName();
+    double GetPaidAmount();
+    double GetOwedAmount();
+    Person* GetNextPerson();
+
+    void setName(string inputString);
+    void setOwedAmount(double in_owedAmount);
+    void setLinkedList(Person* in_nextPersonPtr);
+};
+typedef Person* PersonPtr ;
+
+Person::Person(string in_name):name(in_name),paidAmount(0){
+}
+Person::Person(string in_name, double in_paidAmount, Person* in_nextPersonPtr):name(in_name),paidAmount(in_paidAmount), nextPersonPtr(in_nextPersonPtr),owedAmount(0){
+}
+string Person::GetName(){
+    return this->name;
+}
+double Person::GetPaidAmount(){
+    return this->paidAmount;
+}
+double Person::GetOwedAmount(){
+    return this->owedAmount;
+}
+Person* Person::GetNextPerson(){
+    return this->nextPersonPtr;
+}
+
+void Person::setOwedAmount(double in_owedAmount){
+    this->owedAmount = in_owedAmount;
+}
+
+void Person::setLinkedList(Person* in_nextPersonPtr){
+    this->nextPersonPtr = in_nextPersonPtr;
+}
+
+void Head_insert(Person* &head, string name, double paidAmount){
+    Person* temp_ptr;
+    temp_ptr = new Person(name, paidAmount, head);
+    head = temp_ptr;
+}
+
+void GiveMoney(Person* giver, Person* receiver, double amount){
+    cout<<giver->GetName()<<", you give "<<receiver->GetName()<<" $"<<amount<<endl;
+    double giverOwed = giver->GetOwedAmount();
+    giver->setOwedAmount(giverOwed-amount);
+
+    double receiverOwed = receiver->GetOwedAmount();
+    receiver->setOwedAmount(receiverOwed+amount);
+}
+
+Person* ReadFromFile(string fileName){
+    ifstream in_stream;
+    in_stream.open(fileName);
+    
+    if(in_stream.fail( )){
+        cout << "Input file opening failed.\n";
+        exit(1); 
+    }
+    double dollarAmount;
+    string name;
+
+    Person* people = NULL;
+    double totalDollarAmount;
+    int numPeople=0;
+
+    while(in_stream >> dollarAmount){
+        getline(in_stream,name); // infile.dat
+        if(name.at(0)==' '){
+            name = name.substr(1,name.length()-1);
+        }
+        Head_insert(people, name, dollarAmount);
+        numPeople++;
+        totalDollarAmount += dollarAmount;
+    };
+    double needToPayAmount = totalDollarAmount/numPeople;
+
+    for(Person* p=people;p!=NULL;p= p->GetNextPerson()){
+        p->setOwedAmount(needToPayAmount - p->GetPaidAmount());
+    }
+
+    return people;
+
+    in_stream.close();
+}
+
+void ResolvePayment(Person* people){
+    double totalDollarAmount=0;
+    int numPeople=0;
+    for(Person* p=people;p!=NULL;p= p->GetNextPerson()){
+        numPeople++;
+        totalDollarAmount += p->GetPaidAmount();
+    }
+    double needToPayAmount = totalDollarAmount/numPeople;
+
+
+    for(Person* p=people;p!=NULL;p= p->GetNextPerson()){
+        double owedAmount = p->GetOwedAmount();
+        if(p->GetPaidAmount()<needToPayAmount){
+            // p is giver
+            Person* next=people;
+            while(p->GetOwedAmount()!=0 && next!=NULL){
+                if(next == p){
+                    next = next->GetNextPerson();
+                    continue;
+                }
+                if(next->GetOwedAmount()<0){
+                    // if the person needs to be paid
+                    double payAmount = -(next->GetOwedAmount()) < p->GetOwedAmount()? -(next->GetOwedAmount()): p->GetOwedAmount();
+                    GiveMoney(p,next,payAmount);
+                }
+                next = next->GetNextPerson();
+            }
+        }
+        else if(p->GetPaidAmount()>needToPayAmount){
+            // p is receiver
+        }
+        else{
+            cout<<p->GetName()<<", you don't need to do anything"<<endl;
+        }
+    }
+    cout<<"In the end, you should all have spent around $"<<needToPayAmount<<endl;
+
+}
+
+
+int main(){
+    cout<<"Enter the filename: ";
+    string fileName;
+    cin>>fileName;
+    Person* people = ReadFromFile(fileName);
+
+    ResolvePayment(people);
+
+    return 0;
+}
