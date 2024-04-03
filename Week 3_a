@@ -1,0 +1,31 @@
+#include <iostream>
+using namespace std;
+
+int main () {
+
+    cout<<"Section a"<<endl;
+
+    int nA, evenIntA;
+    int countA = 1;
+    cout<<"Please enter a positive integer: ";
+    cin>>nA;
+
+    while (countA <= nA){
+        evenIntA = countA * 2;
+        cout<<evenIntA<<endl;
+        countA++;
+    }
+
+    cout<<"Section b"<<endl;
+    
+    int nB, countB, evenIntB;
+    cout<<"Please enter a positive integer: ";
+    cin>>nB;
+
+    for (countB = 1; countB <= nB; countB++) {
+        evenIntB = countB * 2;
+        cout<<evenIntB<<endl;
+    }
+    return 0;
+}
+
