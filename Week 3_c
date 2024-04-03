@@ -1,0 +1,25 @@
+#include <iostream>
+using namespace std;
+
+int main () {
+
+    int number, deciNum, counter;
+  
+    cout<<"Enter decimal number: \n";
+    cin>>number;
+    int place = 1, remainder = 0, binaryNumber = 0;
+    deciNum = number;
+    counter = 1;
+    while (deciNum > 0) 
+    {
+        remainder = deciNum % 2;
+        deciNum = deciNum / 2;
+        binaryNumber = binaryNumber + (remainder * place);
+        place = place * 10;
+        counter++;
+    }
+    cout<<"The binary representation of "<<number<<" is "<<binaryNumber<<endl;
+
+    return 0;
+}
+
