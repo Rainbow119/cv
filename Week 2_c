@@ -1,0 +1,39 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main () {
+
+    double a, b, c;
+
+    cout<<"Please enter value of a: ";
+    cin>>a;
+    cout<<"Please enter value of b: ";
+    cin>>b;
+    cout<<"Please enter value of c: ";
+    cin>>c;
+    
+    cout.setf(ios::fixed);
+    cout.setf(ios::showpoint);
+    cout.precision(1);
+
+    double discriminant = b*b - (4*a*c);
+    double sqrtDiscriminant = sqrt(discriminant);
+    double x1 = (-(b) + sqrtDiscriminant) / (2*a);
+    double x2 = (-(b) - sqrtDiscriminant) / (2*a);
+
+    if (a == 0 && b == 0 && c == 0)
+        cout<<"This equation has infinite number of solutions.";
+    else if (a == 0 && b == 0)
+        cout<<"This equation has no solution.";
+    else if (a == 0)
+        cout<<"This equation has no solution.";
+    else if (b == 0)
+        cout<<"This equation has no real solution.";
+    else if (x1 == x2) 
+        cout<<"This equation has a single real solution x = "<<x1<<endl;
+    else if (discriminant > 0) 
+        cout<<"This equation has two real solutions x = {"<<x1<<", "<<x2<<"}"<<endl;
+
+    return 0;
+}
