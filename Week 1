@@ -1,0 +1,27 @@
+#include <iostream>
+using namespace std;
+
+int main () {
+
+    int numQuarters, numDimes, numNickels, numPennies;
+    int totalDollars, totalCents;
+    int leftOverCents;
+
+    cout<<"Please enter number of coins:"<<endl;
+    cout<<"# of quarters: ";
+    cin>>numQuarters;
+    cout<<"# of dimes: ";
+    cin>>numDimes;
+    cout<<"# of nickels: ";
+    cin>>numNickels;
+    cout<<"# of pennies: ";
+    cin>>numPennies;
+
+    totalCents = (numQuarters * 25) + (numDimes * 10) + (numNickels * 5) + numPennies;
+    totalDollars = totalCents / 100;
+    leftOverCents = totalCents % 100; 
+
+    cout<<"The total is "<<totalDollars<<" dollars and "<<leftOverCents<<" cents."<<endl;
+
+    return 0;
+}
