@@ -1,0 +1,57 @@
+#include <iostream>
+using namespace std;
+
+const int FLOOR = 1;
+const int CEILING = 2;
+const int ROUND = 3;
+
+int main () {
+
+    double inputNo, fracPart;
+    int choice, result, intPart;
+
+    cout<<"Please enter a Real number: "<<endl;
+    cin>>inputNo;
+
+    cout<<"Choose your rounding method: "<<endl;
+    cout<<"1. Floor round"<<endl;
+    cout<<"2. Ceiling round"<<endl;
+    cout<<"3. Round to the nearest whole number"<<endl;
+    cin>>choice;
+
+    intPart = (int)inputNo;
+    fracPart = inputNo - (double)intPart;
+
+    switch (choice)
+    {
+        case FLOOR:
+            result = intPart;
+            cout<<result<<endl;
+            break;
+        case CEILING:
+            if (fracPart == 0)
+            {            
+                result = intPart;
+                cout<<result<<endl;
+            }
+            else 
+            {
+                result = intPart + 1;
+                cout<<result<<endl;
+            }
+            break;
+        case ROUND:
+            if(fracPart < 0.5)
+            {
+                result = intPart;
+                cout<<result<<endl;
+            }
+            else
+            {
+                result = intPart + 1;
+                cout<<result<<endl;
+            }
+            break;
+    }
+    return 0;
+}
